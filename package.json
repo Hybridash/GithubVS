@@ -1,0 +1,129 @@
+{
+  "name": "githubvs",
+  "displayName": "GithubVS",
+  "description": "Manage your GitHub repo from a sidebar and push with one click.",
+  "version": "1.0.0",
+  "publisher": "Hybridash",
+  "license": "MIT",
+  "icon": "media/icon.png",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Hybridash/GithubVS"
+  },
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": ["SCM Providers", "Other"],
+  "keywords": ["github", "git", "push", "publish", "repo"],
+  "activationEvents": ["onStartupFinished"],
+  "main": "./out/extension.js",
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "githubvs",
+          "title": "GithubVS",
+          "icon": "media/sidebar.svg"
+        }
+      ]
+    },
+    "views": {
+      "githubvs": [
+        {
+          "id": "githubvs.repo",
+          "name": "Repository"
+        }
+      ]
+    },
+    "viewsWelcome": [
+      {
+        "view": "githubvs.repo",
+        "contents": "Open a folder to get started.\n[Open Folder](command:vscode.openFolder)\n[Clone From GitHub](command:githubvs.clone)",
+        "when": "workbenchState == empty"
+      },
+      {
+        "view": "githubvs.repo",
+        "contents": "This folder isn't on GitHub yet.\n[Publish to GitHub](command:githubvs.publish)\n[Clone From GitHub](command:githubvs.clone)",
+        "when": "workbenchState != empty && !githubvs.isRepo"
+      }
+    ],
+    "commands": [
+      { "command": "githubvs.quickPush", "title": "Quick Push (save, commit, push)", "category": "GithubVS", "icon": "$(cloud-upload)" },
+      { "command": "githubvs.publish", "title": "Publish Folder to GitHub", "category": "GithubVS", "icon": "$(repo-push)" },
+      { "command": "githubvs.clone", "title": "Clone From GitHub", "category": "GithubVS", "icon": "$(repo-clone)" },
+      { "command": "githubvs.pull", "title": "Pull", "category": "GithubVS", "icon": "$(cloud-download)" },
+      { "command": "githubvs.sync", "title": "Sync (pull then push)", "category": "GithubVS", "icon": "$(sync)" },
+      { "command": "githubvs.switchBranch", "title": "Switch or Create Branch", "category": "GithubVS", "icon": "$(git-branch)" },
+      { "command": "githubvs.openOnGitHub", "title": "Open Repo on GitHub", "category": "GithubVS", "icon": "$(github)" },
+      { "command": "githubvs.openPullRequest", "title": "Open Pull Request", "category": "GithubVS", "icon": "$(git-pull-request)" },
+      { "command": "githubvs.refresh", "title": "Refresh", "category": "GithubVS", "icon": "$(refresh)" },
+      { "command": "githubvs.openChange", "title": "Open File", "category": "GithubVS" },
+      { "command": "githubvs.openCommit", "title": "View Commit on GitHub", "category": "GithubVS" }
+    ],
+    "menus": {
+      "view/title": [
+        { "command": "githubvs.quickPush", "when": "view == githubvs.repo && githubvs.isRepo", "group": "navigation@1" },
+        { "command": "githubvs.sync", "when": "view == githubvs.repo && githubvs.isRepo", "group": "navigation@2" },
+        { "command": "githubvs.openOnGitHub", "when": "view == githubvs.repo && githubvs.isRepo", "group": "navigation@3" },
+        { "command": "githubvs.refresh", "when": "view == githubvs.repo", "group": "navigation@4" },
+        { "command": "githubvs.pull", "when": "view == githubvs.repo && githubvs.isRepo", "group": "more@1" },
+        { "command": "githubvs.switchBranch", "when": "view == githubvs.repo && githubvs.isRepo", "group": "more@2" },
+        { "command": "githubvs.openPullRequest", "when": "view == githubvs.repo && githubvs.isRepo", "group": "more@3" },
+        { "command": "githubvs.clone", "when": "view == githubvs.repo", "group": "more@4" }
+      ],
+      "commandPalette": [
+        { "command": "githubvs.openChange", "when": "false" },
+        { "command": "githubvs.openCommit", "when": "false" }
+      ]
+    },
+    "keybindings": [
+      {
+        "command": "githubvs.quickPush",
+        "key": "ctrl+alt+p",
+        "mac": "cmd+alt+p"
+      }
+    ],
+    "configuration": {
+      "title": "GithubVS",
+      "properties": {
+        "githubvs.defaultCommitMessage": {
+          "type": "string",
+          "default": "Update",
+          "description": "Commit message used when you leave the box empty in Quick Push."
+        },
+        "githubvs.askForCommitMessage": {
+          "type": "boolean",
+          "default": true,
+          "description": "Ask for a commit message on Quick Push. Turn off to always use the default message."
+        },
+        "githubvs.pullBeforePush": {
+          "type": "boolean",
+          "default": true,
+          "description": "Pull (rebase) before pushing, so pushes don't get rejected when the repo changed on GitHub."
+        },
+        "githubvs.showStatusBar": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show the Push button in the status bar."
+        },
+        "githubvs.newRepoPrivate": {
+          "type": "boolean",
+          "default": false,
+          "description": "Make new repos private by default when publishing."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "package": "vsce package --no-dependencies",
+    "vscode:prepublish": "npm run compile"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "@types/vscode": "^1.85.0",
+    "@vscode/vsce": "^3.2.0",
+    "typescript": "^5.4.0"
+  }
+}
